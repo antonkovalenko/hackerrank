@@ -1,4 +1,6 @@
-3
-ab
+1
+abc
 bb
+abcde
+abcd
 hefg
