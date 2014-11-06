@@ -3,16 +3,6 @@ to solve the task:
 https://www.hackerrank.com/challenges/bigger-is-greater
 """
 def bigger_is_greater():
-
-    def gen_all_letter_combinations(str_src):
-        result = list()
-        for i in range(len(str_src)):
-            for j in range(len(str_src)):
-                if i == j:
-                    continue
-                result.append(swap_letters(str_src, i, j))
-        return result
-
     testdata_filename = 'testdata/bigger_is_greater.txt'
     try:
         data_in_fh = open(testdata_filename, 'r')
@@ -31,15 +21,48 @@ def bigger_is_greater():
     while len(line) > 0:
         line = data_in_fh.readline()
         line = line.rstrip()
-        next_line = None
+        next_line = inc_string_lexically(line)
         print "src line: {:s} handled line: {:s}".format(line, next_line)
-        print gen_all_letter_combinations(line)
+        print next_line
         if testcases_handled == number_of_testcases:
             print "Have analysed: {:d} testcases, exiting".format(testcases_handled)
             break
         testcases_handled += 1
-
     return
+
+"""
+return a string that is lexically next one after the src_line
+https://www.hackerrank.com/challenges/bigger-is-greater
+"""
+
+
+def inc_string_lexically(src_line):
+
+    result_line = "no answer"
+    for i in sorted(range(len(src_line)), reverse=True):
+        if i == 0:
+            break
+        if src_line[i-1] < src_line[i]:
+            print "swapping at: {:d} tail: {:s}".format(i, src_line[i-1:])
+            result_line = swap_letters(src_line, i-1, get_closest_greater_letter(src_line, src_line[i-1], i-1))
+            head = result_line[:i]
+            tail = ''.join(sorted(result_line[i:]))
+            return head + tail
+    return result_line
+
+
+def get_closest_greater_letter(l_string, l_char, l_lookup_start_idx):
+    if len(l_char) > 1:
+        raise TypeError("l_char has to be 1 character long")
+    if l_lookup_start_idx >= len(l_string):
+        raise Exception("l_lookup_start_idx must be less than length of l_string")
+    closest_letter = None
+    for i in range(l_lookup_start_idx, len(l_string)):
+        if ord(l_string[i]) <= ord(l_char):
+            continue
+        if (closest_letter is None) or (ord(l_string[i]) - ord(l_char)) < (ord(l_string[closest_letter]) - ord(l_char)):
+            closest_letter = i
+    return closest_letter
 
 
 def swap_letters(string_to_mod, index_a, index_b):
